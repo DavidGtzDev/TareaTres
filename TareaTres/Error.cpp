@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 Error::Error(std::string fch, std::string hr, std::string ip, std::string log)
 {
@@ -79,7 +80,7 @@ int Error::stringDeFechaAEntero(std::string fecha)
         if (linea.find(mes) != std::string::npos) {
             std::string valor = linea.substr(linea.find(mes) + 4);
             mesInt = std::stoi(valor);
-            fechaInt = (mesInt * 10) + diaInt;
+            fechaInt = (mesInt * 1000) + diaInt;
             break;
         }
     }
@@ -93,6 +94,11 @@ int Error::stringDeHoraAEntero(std::string hora)
     return 0;
 }
 
+int Error::getIntFecha()
+{
+    return this->fechaNum;
+}
+
 std::ostream& operator<<(std::ostream& os, const Error& obj)
 {
     os << "Fecha: " << obj.fecha << "   ";
@@ -100,4 +106,92 @@ std::ostream& operator<<(std::ostream& os, const Error& obj)
     os << "IP: " << obj.ip << "   ";
     os << "Error: " << obj.log << "   ";
     return os;
+}
+
+void Error::quickSort(std::vector<Error>& vectorDeErrores, int bajo, int alto)
+{
+    if (bajo < alto)
+    {
+        int pivotIndex = partition(vectorDeErrores, bajo, alto);
+
+        // Recursively sort the subvectors
+        quickSort(vectorDeErrores, bajo, pivotIndex - 1);
+        quickSort(vectorDeErrores, pivotIndex + 1, alto);
+    }
+}
+
+int Error::partition(std::vector<Error>& vectorDeErrores, int bajo, int alto)
+{
+    Error pivot = vectorDeErrores[alto]; 
+    int i = bajo - 1;                    
+
+    for (int j = bajo; j < alto; ++j)
+    {
+        if (vectorDeErrores[j].getIntFecha() < pivot.getIntFecha())
+        {
+            ++i;
+            std::swap(vectorDeErrores[i], vectorDeErrores[j]);
+        }
+    }
+
+    std::swap(vectorDeErrores[i + 1], vectorDeErrores[alto]);
+    return i + 1;
+}
+
+std::vector<Error> Error::binarySearch(std::vector<Error>& vectorDeErrores, int fechaInicio, int fechaFin)
+{
+    int low = 0;
+    int high = vectorDeErrores.size() - 1;
+    int indiceInicio = 0;
+    int indiceFinal = 0;
+    std::vector<Error> resultado;
+
+    while (low <= high)
+    {
+        int mid = low + (high - low) / 2;
+        Error& currentError = vectorDeErrores[mid];
+  
+        if (fechaInicio == currentError.getIntFecha())
+        {
+            indiceInicio = mid;
+            break;
+        }
+        else if (fechaInicio < currentError.getIntFecha())
+        {
+            high = mid - 1;
+        }
+        else
+        {
+            low = mid + 1; 
+        }
+    }
+
+    low = 0;
+    high = vectorDeErrores.size() - 1;
+
+    while (low <= high)
+    {
+        int mid = low + (high - low) / 2;
+        Error& currentError = vectorDeErrores[mid];
+
+        if (fechaFin == currentError.getIntFecha())
+        {
+            indiceFinal = mid;
+            break;
+        }
+        else if (fechaFin < currentError.getIntFecha())
+        {
+            high = mid - 1;
+        }
+        else
+        {
+            low = mid + 1;
+        }
+    }
+
+    for (int i = indiceInicio; i <= indiceFinal; i++) {
+        resultado.push_back(vectorDeErrores[i]);
+    }
+
+    return resultado;
 }

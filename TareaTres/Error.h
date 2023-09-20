@@ -17,5 +17,9 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const Error& obj);
 	static int stringDeFechaAEntero(std::string fecha);
 	int stringDeHoraAEntero(std::string hora);
+	static void quickSort(std::vector<Error>& vectorDeErrores, int bajo, int alto);
+	int getIntFecha();
+	static int partition(std::vector<Error>& vectorDeErrores, int bajo, int alto);
+	static std::vector<Error> binarySearch(std::vector<Error>& vectorDeErrores, int fechaInicio, int fechaFin);
 };
 
