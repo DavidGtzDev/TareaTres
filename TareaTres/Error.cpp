@@ -85,6 +85,10 @@ int Error::stringDeFechaAEntero(std::string fecha)
         }
     }
 
+    if (fechaInt == 0) {
+        throw std::invalid_argument("El argumento ingresado no es valido");
+    }
+
     archivo.close();
     return fechaInt;
 }
@@ -114,7 +118,6 @@ void Error::quickSort(std::vector<Error>& vectorDeErrores, int bajo, int alto)
     {
         int pivotIndex = partition(vectorDeErrores, bajo, alto);
 
-        // Recursively sort the subvectors
         quickSort(vectorDeErrores, bajo, pivotIndex - 1);
         quickSort(vectorDeErrores, pivotIndex + 1, alto);
     }
